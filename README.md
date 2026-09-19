@@ -21,6 +21,34 @@
 ---
 
 # 一、新 VPS 安装
+## 一键安装
+
+适用于全新的 Debian VPS。
+
+使用 root 执行：
+
+```bash
+bash -c 'set -e; command -v curl >/dev/null 2>&1 || { apt-get update && apt-get install -y curl; }; d=$(mktemp -d); curl -fL https://github.com/GhostForgeLab/IPLC-v1.0.0/releases/latest/download/iplc-light.tar.gz -o "$d/iplc-light.tar.gz"; tar -xzf "$d/iplc-light.tar.gz" -C "$d"; bash "$d/iplc-light/install.sh"; rm -rf "$d"'
+```
+
+安装完成后运行：
+
+```bash
+iplc-check
+```
+
+查看当前转发规则：
+
+```bash
+iplc-list
+```
+
+以后新增转发：
+
+```bash
+iplc-add
+```
+
 
 将：
 
