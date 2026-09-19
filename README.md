@@ -297,11 +297,17 @@ iplc-check
 
 ## 环境
 
-当前版本主要用于：
+已验证：
+- Debian 13
 
-* Debian 13
-* nftables
-* Python 3
+主要依赖：
+- nftables
+- Python 3
+- systemd
+- iproute2
+
+理论兼容 Debian 12 及后续 Debian 版本。
+系统大版本升级后建议运行 `iplc-check` 进行兼容性检查。
 
 版本：
 
