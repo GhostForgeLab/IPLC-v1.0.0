@@ -12,7 +12,7 @@
 - 检查 nftables `include` 时忽略注释行
 - 源码 `install.sh`、`iplc.py` 已纳入仓库；下面的新安装命令从 `main` 获取修复版
 
-旧的 `v1.0.0` Release 压缩包仍是历史版本，不含上述修复，请使用下面的安装命令。
+原 README 中的 `releases/latest/download` 地址目前返回 404。在线安装请使用下方命令；离线安装包存放在仓库的 `dist/iplc-light.tar.gz`。
 
 ## 功能
 
@@ -70,7 +70,14 @@ iplc-add
 ```
 
 
-离线安装：下载仓库 `main` 的源码 ZIP，上传到 VPS，解压后进入包含 `install.sh`、`iplc.py` 的目录，执行：
+离线安装：下载仓库中的 [iplc-light.tar.gz](https://raw.githubusercontent.com/GhostForgeLab/IPLC-v1.0.0/main/dist/iplc-light.tar.gz)，上传到 VPS，解压并进入目录：
+
+```bash
+tar -xzf iplc-light.tar.gz
+cd iplc-light
+```
+
+然后执行：
 
 ```bash
 bash install.sh
