@@ -4,6 +4,16 @@
 
 主要用于在 IPLC 中转 VPS 上快速添加、删除、查看和备份 TCP/UDP DNAT 转发规则。
 
+## v1.0.1 修复
+
+- 状态文件丢失但已有运行时表或持久化配置时，停止初始化，避免清空现有转发
+- 备份恢复只读取并校验 `state.json`，不解压归档文件；无效序号会拒绝
+- 遇到无法解析入口端口的外部 DNAT/redirect 规则时，拒绝添加，避免误判无冲突
+- 检查 nftables `include` 时忽略注释行
+- 源码 `install.sh`、`iplc.py` 已纳入仓库；下面的新安装命令从 `main` 获取修复版
+
+旧的 `v1.0.0` Release 压缩包仍是历史版本，不含上述修复，请使用下面的安装命令。
+
 ## 功能
 
 * 查看当前 DNAT 转发规则
@@ -23,13 +33,23 @@
 # 一、新 VPS 安装
 ## 在线一键安装
 
-适用于全新的 Debian VPS。
+**只适用于全新的 Debian VPS**。此命令会安装系统依赖；已有生产规则的服务器请先检查依赖，再使用下方的现有服务器安装方式。
 
 使用 root 执行：
 
 ```bash
-bash -c 'set -e; command -v curl >/dev/null 2>&1 || { apt-get update && apt-get install -y curl; }; d=$(mktemp -d); curl -fL https://github.com/GhostForgeLab/IPLC-v1.0.0/releases/latest/download/iplc-light.tar.gz -o "$d/iplc-light.tar.gz"; tar -xzf "$d/iplc-light.tar.gz" -C "$d"; bash "$d/iplc-light/install.sh"; rm -rf "$d"'
+bash -c 'set -e; apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y curl nftables python3 iproute2 procps; bash <(curl -fsSL https://raw.githubusercontent.com/GhostForgeLab/IPLC-v1.0.0/main/install.sh)'
 ```
+
+### 已有生产规则的服务器
+
+先确认 `nft`、`python3`、`ip`、`sysctl`、`systemctl`、`curl` 均可用，再运行：
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/GhostForgeLab/IPLC-v1.0.0/main/install.sh)
+```
+
+安装器只更新自己的表；如果脚本状态丢失但检测到旧表或旧配置，会停止并提示恢复，不会自动清空它。
 
 安装完成后运行：
 
@@ -50,22 +70,9 @@ iplc-add
 ```
 
 
-离线安装：
-
-`iplc-light.tar.gz`
-
-上传到 VPS 的：
-
-`/root`
-
-目录。
-
-然后执行：
+离线安装：下载仓库 `main` 的源码 ZIP，上传到 VPS，解压后进入包含 `install.sh`、`iplc.py` 的目录，执行：
 
 ```bash
-cd /root
-tar -xzf iplc-light.tar.gz
-cd iplc-light
 bash install.sh
 ```
 
@@ -78,11 +85,10 @@ iplc-check
 如果最后显示：
 
 ```text
-自检结果：0 个失败，0 个警告。
-结论：全部通过。
+自检结果：0 个失败。
 ```
 
-说明安装正常。
+说明核心检查通过。安装器不会在安装期间重启已有 nftables 服务；如果服务当前不是 `active`，自检可能提示警告，请单独确认开机加载行为。
 
 ---
 
@@ -244,10 +250,7 @@ iplc-check
 新 VPS 安装流程仍然是：
 
 ```bash
-cd /root
-tar -xzf iplc-light.tar.gz
-cd iplc-light
-bash install.sh
+bash -c 'set -e; apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y curl nftables python3 iproute2 procps; bash <(curl -fsSL https://raw.githubusercontent.com/GhostForgeLab/IPLC-v1.0.0/main/install.sh)'
 iplc-check
 ```
 
@@ -339,4 +342,4 @@ iplc-check
 
 版本：
 
-`IPLC Light v1.0.0`
+`IPLC Light v1.0.1`
