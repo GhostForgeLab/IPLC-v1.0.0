@@ -38,7 +38,7 @@
 使用 root 执行：
 
 ```bash
-bash -c 'set -e; apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y curl nftables python3 iproute2 procps; bash <(curl -fsSL https://raw.githubusercontent.com/GhostForgeLab/IPLC-v1.0.0/main/install.sh)'
+bash -c 'set -e; apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y curl nftables python3 iproute2 procps; d=$(mktemp -d); trap "rm -rf -- $d" EXIT; curl -fsSL --retry 3 https://raw.githubusercontent.com/GhostForgeLab/IPLC-v1.0.0/main/install.sh -o "$d/install.sh"; bash "$d/install.sh"'
 ```
 
 ### 已有生产规则的服务器
@@ -46,7 +46,7 @@ bash -c 'set -e; apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install 
 先确认 `nft`、`python3`、`ip`、`sysctl`、`systemctl`、`curl` 均可用，再运行：
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/GhostForgeLab/IPLC-v1.0.0/main/install.sh)
+bash -c 'set -e; d=$(mktemp -d); trap "rm -rf -- $d" EXIT; curl -fsSL --retry 3 https://raw.githubusercontent.com/GhostForgeLab/IPLC-v1.0.0/main/install.sh -o "$d/install.sh"; bash "$d/install.sh"'
 ```
 
 安装器只更新自己的表；如果脚本状态丢失但检测到旧表或旧配置，会停止并提示恢复，不会自动清空它。
